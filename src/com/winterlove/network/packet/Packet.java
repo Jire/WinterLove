@@ -1,5 +1,6 @@
 package com.winterlove.network.packet;
 
+
 public class Packet {
 
 	private final int id, length;
