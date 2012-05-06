@@ -1,7 +1,7 @@
 package com.winterlove.network.packet;
 
 public interface PacketParser {
-	
-	public void parse(Packet packet);
+
+	public PacketRepresentation parse(Packet packet);
 
 }

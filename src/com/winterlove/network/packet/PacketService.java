@@ -8,8 +8,8 @@ import org.reflections.Reflections;
 
 public class PacketService {
 
-	private final Map<Integer, PacketBuilder> builders = new HashMap<Integer, PacketBuilder>(256);
-	private final Map<Integer, PacketParser> parsers = new HashMap<Integer, PacketParser>(256);
+	private final Map<Class<? extends PacketRepresentation>, PacketBuilder> builders = new HashMap<>(256);
+	private final Map<Integer, PacketParser> parsers = new HashMap<>(256);
 
 	public boolean registerBuilder(Class<?> builder) {
 		Object object = null;
@@ -27,9 +27,7 @@ public class PacketService {
 		if (annotation == null) {
 			return false;
 		}
-		for (int packetId : annotation.value()) {
-			builders.put(packetId, (PacketBuilder) object);
-		}
+		builders.put(annotation.value(), (PacketBuilder) object);
 		return true;
 	}
 
@@ -71,19 +69,20 @@ public class PacketService {
 		}
 	}
 
-	public Packet buildPacket(int packetId) {
-		PacketBuilder builder = builders.get(packetId);
+	public Packet buildPacket(PacketRepresentation packet) {
+		PacketBuilder builder = builders.get(packet);
 		if (builder != null) {
-			return builder.build();
+			return builder.build(packet);
 		}
 		return null;
 	}
 
-	public void parsePacket(int packetId, Packet packet) {
+	public PacketRepresentation parsePacket(int packetId, Packet packet) {
 		PacketParser parser = parsers.get(packetId);
 		if (parser != null) {
-			parser.parse(packet);
+			return parser.parse(packet);
 		}
+		return null;
 	}
 
 }

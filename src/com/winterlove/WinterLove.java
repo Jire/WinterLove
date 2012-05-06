@@ -19,6 +19,7 @@ public final class WinterLove {
 	private void start() {
 		engine.start();
 		server.start();
+		System.out.println("WinterLove is ready.");
 	}
 
 	public static void main(String... args) {

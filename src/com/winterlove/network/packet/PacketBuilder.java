@@ -2,6 +2,6 @@ package com.winterlove.network.packet;
 
 public interface PacketBuilder {
 	
-	public Packet build();
+	public Packet build(PacketRepresentation packet);
 
 }
