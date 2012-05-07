@@ -28,21 +28,21 @@ public class InputStream extends ByteArrayInputStream {
 
 	public int readShortA() {
 		int i = (readUnsignedByte() << 8) + (read() - 128 & 0xFF);
-		if(i > 32767)
+		if (i > 32767)
 			i -= 0x10000;
 		return i;
 	}
 
 	public int readLEShort() {
 		int i = readUnsignedByte() + (readUnsignedByte() << 8);
-		if(i > 32767)
+		if (i > 32767)
 			i -= 0x10000;
 		return i;
 	}
 
 	public int readLEShortA() {
 		int i = (read() - 128 & 0xFF) + (readUnsignedByte() << 8);
-		if(i > 32767)
+		if (i > 32767)
 			i -= 0x10000;
 		return i;
 	}

@@ -6,12 +6,14 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import com.winterlove.network.Client;
+
 public class PacketService {
 
 	private final Map<Class<? extends PacketRepresentation>, PacketBuilder> builders = new HashMap<>(256);
 	private final Map<Integer, PacketParser> parsers = new HashMap<>(256);
 
-	public boolean registerBuilder(Class<?> builder) {
+	public boolean registerBuilder(Class<? extends PacketBuilder> builder) {
 		Object object = null;
 		try {
 			object = builder.newInstance();
@@ -20,10 +22,7 @@ public class PacketService {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		if (!(object instanceof PacketBuilder)) {
-			return false;
-		}
-		BuildsPacket annotation = object.getClass().getAnnotation(BuildsPacket.class);
+		BuildsPacket annotation = builder.getAnnotation(BuildsPacket.class);
 		if (annotation == null) {
 			return false;
 		}
@@ -39,7 +38,7 @@ public class PacketService {
 		}
 	}
 
-	public boolean registerParser(Class<?> parser) {
+	public boolean registerParser(Class<? extends PacketParser> parser) {
 		Object object = null;
 		try {
 			object = parser.newInstance();
@@ -48,10 +47,7 @@ public class PacketService {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		if (!(object instanceof PacketBuilder)) {
-			return false;
-		}
-		ParsesPacket annotation = object.getClass().getAnnotation(ParsesPacket.class);
+		ParsesPacket annotation = parser.getAnnotation(ParsesPacket.class);
 		if (annotation == null) {
 			return false;
 		}
@@ -69,10 +65,11 @@ public class PacketService {
 		}
 	}
 
-	public Packet buildPacket(PacketRepresentation packet) {
-		PacketBuilder builder = builders.get(packet);
+	public Packet buildPacket(PacketRepresentation packetRep) {
+		PacketBuilder builder = builders.get(packetRep);
 		if (builder != null) {
-			return builder.build(packet);
+			Packet packet = builder.build(packetRep);
+			return packet;
 		}
 		return null;
 	}
@@ -83,6 +80,10 @@ public class PacketService {
 			return parser.parse(packet);
 		}
 		return null;
+	}
+
+	public void buildPacketAndShip(PacketRepresentation packet, Client client) {
+		client.getSession().queuePacket(buildPacket(packet));
 	}
 
 }

@@ -17,6 +17,8 @@ public class LoginPacketParser implements PacketParser {
 		int magic = input.readUnsignedByte();
 		int clientVersion = input.readUnsignedShort();
 		boolean lowDetail = input.read() == 0;
+		
+		System.out.println(magic + "," + clientVersion + "," + lowDetail);
 
 		int[] fileChecksums = new int[9];
 		for (int i = 0; i < fileChecksums.length; i++) {

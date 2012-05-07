@@ -3,14 +3,13 @@ package com.winterlove.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.winterlove.model.update.PlayerUpdateService;
+import com.winterlove.engine.Task;
 
-public class World {
+public class World implements Task {
 
 	private static final int MAXIMUM_PLAYERS = 2000;
 
 	private final List<Player> players = new ArrayList<Player>(MAXIMUM_PLAYERS);
-	private final PlayerUpdateService playerUpdateService = new PlayerUpdateService(MAXIMUM_PLAYERS);
 
 	public boolean registerPlayer(Player player) {
 		return players.add(player);
@@ -20,8 +19,16 @@ public class World {
 		return players.remove(player);
 	}
 
-	public void updatePlayers() {
-		playerUpdateService.update(players);
+	@Override
+	public boolean run() {
+		try {
+			for (Player player : players) {
+				player.process();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 }

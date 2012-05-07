@@ -31,7 +31,12 @@ public class Engine extends Thread {
 
 	@Override
 	public void start() {
+		if (isRunning()) {
+			throw new IllegalStateException("Cannot start engine while already running");
+		}
+
 		setRunning(true);
+
 		super.start();
 	}
 

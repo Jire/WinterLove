@@ -1,7 +1,11 @@
 package com.winterlove.model.map;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class Position {
+
+	private static final Map<Integer, Position> cache = new HashMap<>();
 
 	private int x, y, z;
 
@@ -9,10 +13,6 @@ public class Position {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-	}
-
-	protected Position(int x, int y) {
-		this(x, y, 0);
 	}
 
 	public int getX() {
@@ -25,6 +25,14 @@ public class Position {
 
 	public int getZ() {
 		return z;
+	}
+
+	public int getRegionX() {
+		return (x >> 3) - 6;
+	}
+
+	public int getRegionY() {
+		return (y >> 3) - 6;
 	}
 
 	public void setX(int x) {
@@ -55,23 +63,32 @@ public class Position {
 
 	@Override
 	public int hashCode() {
-		// FIXME (fidgy, but works...)
-		return ((x & 0xFFF) << 20) | ((y & 0xFFF) << 8) | (z & 0xFF);
+		return hashCode(getX(), getY(), getZ());
 	}
 
 	public static Position create(int hashCode) {
-		int x = (hashCode >> 20) & 0xFFF;
-		int y = (hashCode >> 8) & 0xFFF;
-		int z = hashCode & 0xFF;
+		int x = hashCode & 0x7FFF;
+		int y = (hashCode >> 15) & 0x7FFF;
+		int z = (hashCode >> 30) & 0b11;
 		return create(x, y, z);
 	}
 
 	public static Position create(int x, int y, int z) {
-		return new Position(x, y, z);
+		int hashCode = hashCode(x, y, z);
+		if (cache.containsKey(hashCode)) {
+			return cache.get(hashCode);
+		}
+		Position position = new Position(x, y, z);
+		cache.put(hashCode, position);
+		return position;
 	}
 
 	public static Position create(int x, int y) {
-		return new Position(x, y);
+		return create(x, y, 0);
+	}
+
+	private static int hashCode(int x, int y, int z) {
+		return ((z & 0b11) << 30) | ((y & 0x7FFF) << 15) | (x & 0x7FFF);
 	}
 
 }

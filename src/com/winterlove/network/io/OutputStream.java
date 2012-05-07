@@ -135,7 +135,7 @@ public class OutputStream {
 	}
 
 	private void expand(int i) {
-		if(position + i < data.length) {
+		if (position + i < data.length) {
 			return;
 		}
 		byte[] newbuf = new byte[(position + i) * 2];

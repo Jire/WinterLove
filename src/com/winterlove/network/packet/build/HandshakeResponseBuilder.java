@@ -10,16 +10,14 @@ import com.winterlove.network.packet.reps.HandshakeResponsePacket;
 @BuildsPacket(HandshakeResponsePacket.class)
 public class HandshakeResponseBuilder implements PacketBuilder {
 
-	private static final int[] INITIAL_RESPONSE = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	private static final byte[] INITIAL_RESPONSE = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	@Override
 	public Packet build(PacketRepresentation packetRep) {
 		HandshakeResponsePacket packet = (HandshakeResponsePacket) packetRep;
 
 		OutputStream output = new OutputStream();
-		for (int i : INITIAL_RESPONSE) {
-			output.write(i);
-		}
+		output.writeBytes(INITIAL_RESPONSE);
 		output.write(packet.getResponseCode());
 		output.writeLong(packet.getSessionKey());
 
