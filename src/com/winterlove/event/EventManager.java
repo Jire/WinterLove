@@ -19,6 +19,8 @@ public class EventManager {
 	}
 
 	public void dispatchEvent(Event event) {
+		// FIXME: concoct a system that registers events to a registry of methods to listeners
+		// this is currently very slow
 		try {
 			for (EventListener listener : listeners) {
 				for (Method method : listener.getClass().getMethods()) {
